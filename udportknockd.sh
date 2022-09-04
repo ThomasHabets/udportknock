@@ -11,16 +11,29 @@ trap cleanup EXIT
 echo "Dir: ${TMPD?}"
 cd "${TMPD?}"
 while true; do
-    nc -lup 1492 -W1 | gunzip > "${TMPD?}/msg.tar"
-    TODAY="$(TZ=UTC date +%Y-%m-%d)"
-    tar xf msg.tar "${TODAY?}" "${TODAY?}.sig"
-    for pub in /etc/portknock/*.pub; do
-        if signify-openbsd -V -p "${pub?}" -m "${TODAY?}"; then
-            addr="$(cat "${TODAY?}")"
-            echo "Adding ${addr?}"
-            nft add element inet filter temp_allow_v4 "{${addr?}}"
-            break
-        fi
-    done
-    rm -f "${TMPD?}/msg.tar" "${TMPD?}/${TODAY?}" "${TMPD?}/${TODAY?}.sig"
+    DATA="$(nc -lup 1492 -W1)"
+    echo "${DATA?}" | (
+	set -e
+	set -o pipefail
+	read ADDR TIMESTAMP SIG
+
+	NOW="$(date +%s)"
+	AGE=$(expr $NOW - $TIMESTAMP)
+	#echo "Age: $AGE ($NOW $TIMESTAMP)"
+	if [[ $AGE -gt 600 ]]; then
+	    echo "Signature too old"
+	else
+	    echo "${ADDR?} ${TIMESTAMP}" > hello
+	    (echo "untrusted comment: tmp"; echo "${SIG?}") > hello.sig
+	    cat hello.sig
+	    for pub in /etc/udportknock/*.pub; do
+		if signify-openbsd -V -p "${pub?}" -m "hello"; then
+		    echo "Adding ${ADDR?}"
+		    nft add element inet filter temp_allow_v4 "{${ADDR?}}"
+		    break
+		fi
+	    done
+	fi
+    )
+    rm -f "${TMPD?}/hello" "${TMPD?}/hello.sig"
 done

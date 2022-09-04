@@ -18,10 +18,10 @@ KEY="$1"
 HOST="$2"
 PORT="$3"
 NET="$4"
-TODAY="$(TZ=UTC date +%Y-%m-%d)"
 
-echo "${NET?}" > "${TMPD?}/${TODAY?}"
-signify-openbsd -S -s "${KEY?}" -m "${TMPD?}/${TODAY?}"
-cd "${TMPD?}"
-tar cf - "${TODAY?}" "${TODAY?}".sig | gzip -9 > hello.tar
-nc -q0 -u "${HOST?}" "${PORT?}" < hello.tar
+TIMESTAMP="$(date +%s)"
+
+echo "${NET?} ${TIMESTAMP?}" > "${TMPD?}/hello"
+signify-openbsd -S -s "${KEY?}" -m "${TMPD?}/hello"
+SIG="$(sed 1d "${TMPD?}/hello.sig")"
+echo "${NET?} ${TIMESTAMP?} ${SIG?}" | nc -q0 -u "${HOST?}" "${PORT?}"

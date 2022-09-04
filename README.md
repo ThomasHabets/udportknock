@@ -20,27 +20,27 @@ Example `/etc/nftables.conf`.
 table inet filter {
   set temp_allow_v4 {
     type ipv4_addr
-	flags interval
-	counter
-	timeout 10m
+    flags interval
+    counter
+    timeout 10m
   }
   chain input {
     type filter hook input priority 0; policy drop;
-	ct state established counter accept comment "Allow already established"
+    ct state established counter accept comment "Allow already established"
     ct state related counter accept comment "Allow related, incl ICMP errors"
     ct state invalid counter drop   comment "Drop invalid packets"
-	
+    
     iifname lo counter accept comment "Allow everything on loopback"
     ip6 daddr ff02::1 counter accept comment "Allow stuff like router advertisment"
 
-	udp port 1492 counter accept comment "Allow portknocks"
-	ip sadd @temp_allow_v4 jump trusted comment "Allow hosts that have portknocked"
-	counter comment "Count dropped packets"
+    udp port 1492 counter accept comment "Allow portknocks"
+    ip sadd @temp_allow_v4 jump trusted comment "Allow hosts that have portknocked"
+    counter comment "Count dropped packets"
   }
   chain trusted {
     tcp dport  22 counter accept comment "Allow SSH"
-	tcp dport  80 counter accept comment "Allow HTTP"
-	tcp dport 443 counter accept comment "Allow HTTPS"
+    tcp dport  80 counter accept comment "Allow HTTP"
+    tcp dport 443 counter accept comment "Allow HTTPS"
   }
 }
 ```

@@ -18,7 +18,7 @@ while true; do
         if signify-openbsd -V -p "${pub?}" -m "${TODAY?}"; then
             addr="$(cat "${TODAY?}")"
             echo "Adding ${addr?}"
-            nft add element inet filter temp_allow "{${addr?}}"
+            nft add element inet filter temp_allow_v4 "{${addr?}}"
             break
         fi
     done

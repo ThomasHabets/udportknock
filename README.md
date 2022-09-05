@@ -1,6 +1,6 @@
 # UDPortknock
 
-Becuase modulating a password over SYN packets is stupid.
+Because modulating a password over SYN packets is stupid.
 
 ## Guide
 

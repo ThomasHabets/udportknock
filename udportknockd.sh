@@ -20,7 +20,7 @@ while true; do
 	echo "${ADDR?} ${TIMESTAMP}" > hello
 	(echo "untrusted comment: tmp"; echo "${SIG?}") > hello.sig
 	for pub in /etc/udportknock/*.pub; do
-	    if signify-openbsd -V -p "${pub?}" -m "hello"; then
+	    if signify-openbsd -q -V -p "${pub?}" -m "hello"; then
 		echo "Adding ${ADDR?}"
 		nft add element inet filter temp_allow_v4 "{${ADDR?}}"
 		break

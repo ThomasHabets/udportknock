@@ -22,6 +22,6 @@ NET="$4"
 TIMESTAMP="$(date +%s)"
 
 echo "${NET?} ${TIMESTAMP?}" > "${TMPD?}/hello"
-signify-openbsd -S -s "${KEY?}" -m "${TMPD?}/hello"
+signify-openbsd -q -S -s "${KEY?}" -m "${TMPD?}/hello"
 SIG="$(sed 1d "${TMPD?}/hello.sig")"
 echo "${NET?} ${TIMESTAMP?} ${SIG?}" | nc -q0 -u "${HOST?}" "${PORT?}"

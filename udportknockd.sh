@@ -13,7 +13,7 @@ cd "${TMPD?}"
 while true; do
     read ADDR TIMESTAMP SIG <<< "$(nc -lup 1492 -W1)"
     NOW="$(date +%s)"
-    AGE=$(expr $NOW - $TIMESTAMP)
+    AGE=$(expr $NOW - $TIMESTAMP || true)
     if [[ $AGE -gt 600 ]]; then
 	echo "Signature too old"
     else

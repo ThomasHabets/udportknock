@@ -4,6 +4,17 @@ Because modulating a password over SYN packets is stupid.
 
 ## Guide
 
+There are two implementations in this repo.
+
+1. udportknockd/unportknock, solving it in userspace.
+2. gen-nftables.sh, to instead do everything on the server side in nftables.
+
+The second solution only works with a fixed password, whereas the
+userspace solutions use fancy signatures.
+
+The main code is (1), so setting up (2) is left as an exercise to the
+reader.
+
 ### Dependency (server and client): signify (from openbsd)
 
 ```

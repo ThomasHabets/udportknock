@@ -1,5 +1,15 @@
 #!/usr/bin/bash
 
+#
+# This script generates an nftables config that checks the contents of
+# an UDP packet for a fixed password. Much better than a cloak and
+# dagger SYN sequence.
+#
+# Much better, of course, is the udportknockd.sh/udportknock.sh, which
+# uses signatures, thus preventing replays. But this script doesn't
+# require anything on the server except nftables.
+#
+
 set -ueo pipefail
 
 PW="$1"
